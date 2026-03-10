@@ -1,53 +1,11 @@
 #include <stdio.h>
-#include <time.h>
 #include <thread>
-#include <algorithm>
-#define MAXN 1024
-#define T 10000
-
-using namespace std;
+#include "lib.h"
 
 double input[MAXN][MAXN];
 double output[MAXN][MAXN];
 double inputB[MAXN][MAXN];
 double outputB[MAXN][MAXN];
-
-double get_seconds() {
-  time_t res = time(NULL);
-  return (double) res;
-}
-
-void non_blocking(double output[MAXN][MAXN], double input[MAXN][MAXN], int n, double* result) {
-  double time0 = get_seconds();
-
-  for(int trials=0;trials<T;trials++) {
-    for(int i=0;i<n;i++) {
-      for(int j=0;j<n;j++) {
-        output[j][i]=input[i][j];
-      }
-    }
-  }
-
-  *result = get_seconds() - time0;
-}
-
-void blocking(double output[MAXN][MAXN], double input[MAXN][MAXN], int n, int b, double* result) {
-  double time0 = get_seconds();
-
-  for(int trials=0;trials<T;trials++) {
-    for(int m=0;m<n;m+=b) {
-      for(int k=0;k<n;k+=b) {
-        for(int i=m;i<min(m+b, n);i++) {
-          for(int j=k;j<min(k+b, n);j++) {
-            output[j][i]=input[i][j];
-          }
-        }
-      }
-    }
-  }
-
-  *result = get_seconds() - time0;
-}
 
 int main(int argc, char* argv[]) {
   int N_values[] = {256, 512, 1024};
@@ -72,8 +30,8 @@ int main(int argc, char* argv[]) {
       }
 
       double t_nb, t_b;
-      thread thread1(non_blocking, output, input, n, &t_nb);
-      thread thread2(blocking, outputB, inputB, n, b, &t_b);
+      std::thread thread1(non_blocking, output, input, n, &t_nb);
+      std::thread thread2(blocking, outputB, inputB, n, b, &t_b);
 
       thread1.join();
       thread2.join();

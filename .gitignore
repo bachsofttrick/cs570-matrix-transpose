@@ -1,3 +1,7 @@
+# Output files
+transpose*
+*.csv
+
 # Prerequisites
 *.d
 

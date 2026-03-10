@@ -5,8 +5,6 @@
 #define MAXN 1024
 #define T 10000
 
-using namespace std;
-
 double get_seconds() {
   time_t res = time(NULL);
   return (double) res;
@@ -51,8 +49,8 @@ void blocking(double** output, double** input, int n, int b, double* result) {
   for(int trials=0;trials<T;trials++) {
     for(int m=0;m<n;m+=b) {
       for(int k=0;k<n;k+=b) {
-        for(int i=m;i<min(m+b, n);i++) {
-          for(int j=k;j<min(k+b, n);j++) {
+        for(int i=m;i<std::min(m+b, n);i++) {
+          for(int j=k;j<std::min(k+b, n);j++) {
             output[j][i]=input[i][j];
           }
         }
@@ -91,8 +89,8 @@ int main(int argc, char* argv[]) {
       }
 
       double t_nb, t_b;
-      thread thread1(non_blocking, output, input, n, &t_nb);
-      thread thread2(blocking, outputB, inputB, n, b, &t_b);
+      std::thread thread1(non_blocking, output, input, n, &t_nb);
+      std::thread thread2(blocking, outputB, inputB, n, b, &t_b);
 
       thread1.join();
       thread2.join();
