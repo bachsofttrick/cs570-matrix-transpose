@@ -2,6 +2,7 @@
 #include <time.h>
 #include <thread>
 #include <algorithm>
+#define MAXN 1024
 #define T 10000
 
 using namespace std;
@@ -20,6 +21,14 @@ double** alloc_matrix(int n) {
 void free_matrix(double** m, int n) {
   for(int i=0;i<n;i++) delete[] m[i];
   delete[] m;
+}
+
+void create_matrix(double** output, double** input, double** outputB, double** inputB, int n) {
+
+}
+
+void erase_matrix(double** output, double** input, double** outputB, double** inputB, int n) {
+
 }
 
 void non_blocking(double** output, double** input, int n, double* result) {
@@ -58,16 +67,16 @@ int main(int argc, char* argv[]) {
   int N_values[] = {256, 512, 1024};
   int B_values[] = {8, 16, 32, 64};
 
-  FILE* fp = fopen("results_malloc_old.csv", "w");
+  double** input   = alloc_matrix(MAXN);
+  double** inputB  = alloc_matrix(MAXN);
+  double** output  = alloc_matrix(MAXN);
+  double** outputB = alloc_matrix(MAXN);
+
+  FILE* fp = fopen("results_malloc.csv", "w");
   fprintf(fp, "N;B;non-blocking (s);blocking (s)\n");
 
   for(int ni=0;ni<sizeof(N_values)/sizeof(N_values[0]);ni++) {
     int n = N_values[ni];
-
-    double** input   = alloc_matrix(n);
-    double** inputB  = alloc_matrix(n);
-    double** output  = alloc_matrix(n);
-    double** outputB = alloc_matrix(n);
 
     for(int bi=0;bi<sizeof(B_values)/sizeof(B_values[0]);bi++) {
       int b = B_values[bi];
@@ -90,12 +99,12 @@ int main(int argc, char* argv[]) {
 
       fprintf(fp, "%d;%d;%lf;%lf\n", n, b, t_nb, t_b);
     }
-
-    free_matrix(input, n);
-    free_matrix(inputB, n);
-    free_matrix(output, n);
-    free_matrix(outputB, n);
   }
+
+  free_matrix(input, MAXN);
+  free_matrix(inputB, MAXN);
+  free_matrix(output, MAXN);
+  free_matrix(outputB, MAXN);
 
   fclose(fp);
   return 0;
